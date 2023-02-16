@@ -1,0 +1,11 @@
+#include <stdio.h>
+#include <unixstd.h>
+/**
+ * main - Entry point.
+ * Return: 1 if success.
+ */
+int main(void)
+{
+fput("and that piece of art is useful\" - Dora Korpar, 2015-10-19\n", stdout);
+return (1);
+}
