@@ -1,9 +1,9 @@
 #include<stdio.h>
 /**
- *main - A program that prints a line ith puts function.
- *Return: 0(success)
-*/
-
+ * main - Entry point
+ *
+ *Return: 0 if success
+ */
 int main(void)
 {
   puts("\"Programming is like building a multilingual puzzle\n");
