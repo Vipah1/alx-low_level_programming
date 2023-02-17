@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 /**
- * main - Entry point.
+ * Description: main - Entry point.
  * Result: 0 if success.
  */
 int main(void)
