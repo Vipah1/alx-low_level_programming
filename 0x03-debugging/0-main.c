@@ -1,20 +1,12 @@
 #include "main.h"
 /**
- * poositive_or_negative - Functions that prints * whether int is positive or negative.
- * Description: Prints positive or negative.
- * Return: int
+ * main - tests function positive_or_negative
+ * Return: 0 if success
  */
-void positive_or_negative(int i)
+int main(void)
 {
 int i;
-i = rand() - RAND_MAX / 2;
-if (i > 0)
-{
-printf("%d is positive\n", i);
-}
-else
-{
-printf("%d is negative\n", i);
-}
+i = 98;
+positive_or_negative(i);
 return (0);
 }
