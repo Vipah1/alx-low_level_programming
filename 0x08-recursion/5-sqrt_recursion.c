@@ -13,11 +13,11 @@ return (-1);
 }
  return (act_sqrt_recursion(n, 0));
 }
-
 /**
  * act_sqrt_recursion - recurs the natural square root
  * @n: the number to be calculated.
  * @i: represents iterator.
+ * Return: Returns the actual square root.
  */
 int act_sqrt_recursion(int n, int i)
 {
@@ -25,7 +25,7 @@ if (i * i > n)
 {
 return (-1);
 }
-if ( i * i == n )
+if (i * i == n )
 {
 return (i);
 }
