@@ -21,7 +21,7 @@ return (act_prime(n, n - 1));
  */
 int act_prime(int n, int i)
 {
-if(i == 1)
+if (i == 1)
 {
 return (1);
 }
