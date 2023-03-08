@@ -11,7 +11,7 @@ if (n <= 1)
 {
 return (0);
 }
-return (act_prime(n, n - q));
+return (act_prime(n, n - 1));
 }
 /**
  * act_prime - real evaluation of prime.
