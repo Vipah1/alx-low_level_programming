@@ -22,7 +22,9 @@ strcpy = malloc((len * sizeof(char)) + 1);
 int count = 0;
 while (str[count] != '\0')
 {
-strcpy[count] = '\0';
+strcpy[count] = str[count];
+count++;
 }
+strcpy[count] = '\0';
 return (strcpy);
 }
