@@ -1,1 +1,1 @@
-Readme for low level programming
+This is the readme for static libraries in C
