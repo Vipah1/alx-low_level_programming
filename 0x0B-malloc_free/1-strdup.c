@@ -10,6 +10,7 @@ char *_strdup(char *str)
 {
 char *strcpy;
 int len = 0;
+int count = 0;
 if (str == NULL)
 {
 return (NULL);
@@ -19,7 +20,6 @@ while (str[len] != '\0')
 len++;
 }
 strcpy = malloc((len * sizeof(char)) + 1);
-int count = 0;
 while (str[count] != '\0')
 {
 count++;
