@@ -19,9 +19,14 @@ while (str[len] != '\0')
 {
 len++;
 }
-strcpy = malloc((len * sizeof(char)) + 1);
+strcpy = malloc((len *sizeof(char)) + 1);
+if (strcpy == NULL)
+{
+return (NULL);
+}
 while (str[count] != '\0')
 {
+strcpy[count] = str[count];
 count++;
 }
 return (strcpy);
