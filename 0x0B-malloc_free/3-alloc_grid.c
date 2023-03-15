@@ -1,4 +1,4 @@
-#include "mian.h"
+#include "main.h"
 #include <stdlib.h>
 /**
  * alloc_grid - This is a nested loop to make a grid
