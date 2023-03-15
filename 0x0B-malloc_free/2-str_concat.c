@@ -27,7 +27,7 @@ while (s2[s] != '\0')
 {
 s++;
 }
-concat = (char *) malloc((i + s +1) *sizeof(char));
+concat = (char *) malloc((i + s + 1) * sizeof(char));
 if (concat == NULL)
 {
 return (NULL);
