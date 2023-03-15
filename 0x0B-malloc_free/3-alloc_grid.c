@@ -3,7 +3,7 @@
 /**
  * alloc_grid - This is a nested loop to make a grid
  * @width: this is the width of the input
- * @heigt: This is the height of the input
+ * @height: This is the height of the input
  * Return: This is a pointer to a 2 dimensional array
  */
 int **alloc_grid(int width, int height)
