@@ -27,12 +27,11 @@ while (s2[s] != '\0')
 {
 s++;
 }
-concat = malloc(sizeof(char) * (i + s + 1));
+concat = malloc((i + s) *sizeof(char) + 1);
 if (concat == NULL)
 {
 return (NULL);
 }
-i = s = 0;
 while (s1[i] != '\0')
 {
 concat[i] = s1[i];
@@ -40,7 +39,7 @@ i++;
 }
 while (s2[s] != '\0')
 {
-concat[i] = s2[s];
+concat[s] = s2[s];
 i++, s++;
 }
 concat[i] = '\0';
