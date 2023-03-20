@@ -13,7 +13,7 @@ if (d == NULL)
 {
 d = malloc(sizeof(struct dog));
 }
-p -> name = name;
-p -> age = age;
+d -> name = name;
+d -> age = age;
 d -> owner = owner;
 }
