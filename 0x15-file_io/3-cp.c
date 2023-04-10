@@ -1,11 +1,11 @@
 #include "main.h"
 #include <stdio.h>
 /**
- * error_file - checks if files can be opened.
- * @file_from: file_from.
- * @file_to: file_to.
+ * error_file - this function checks if files can be opened.
+ * @file_from: Argument of the source.
+ * @file_to: argument for destination file_to.
  * @argv: arguments vector.
- * Return: no return.
+ * Return: void function (returns nothing).
  */
 void error_file(int file_from, int file_to, char *argv[])
 {
