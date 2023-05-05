@@ -1,1 +1,1 @@
-This is the readme for static libraries in C
+this is a readme for bit manipulation
