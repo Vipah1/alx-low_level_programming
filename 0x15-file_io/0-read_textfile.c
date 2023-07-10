@@ -1,6 +1,6 @@
 #include "main.h"
 /**
-* read_tetfile - This funnction reads a text file and prints it to STDOUT.
+* read_textfile - This funnction reads a text file and prints it to STDOUT.
 * @filename: this the name or file to be read.
 * @letters: this is the number of letter to be read
 * Return: Return w if success and 0 when the function fails to to execute
