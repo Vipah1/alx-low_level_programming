@@ -1,9 +1,9 @@
 #include "main.h"
 /**
-* read_textfile - This funnction reads a text file and prints it to STDOUT.
+* read_textfile - This function reads a text file and prints it to standard output.
 * @filename: this the name or file to be read.
 * @letters: this is the number of letter to be read
-* Return: Return w if success and 0 when the function fails to to execute
+* Return: Returns w if success and 0 when the function fails to to execute
 */
 ssize_t read_textfile(const char *filename, size_t letters)
 {
@@ -11,7 +11,7 @@ char *buf;
 ssize_t fd;
 ssize_t w;
 ssize_t t;
-fd = open(filename, 0_RDONLY);
+fd = open(filename, O_RDONLY);
 if (fd == -1)
 return (0);
 buf = malloc(sizeof(char) * letters);
