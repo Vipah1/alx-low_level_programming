@@ -1,1 +1,0 @@
-This is a readmefile for bit manipulation in C programming language.
