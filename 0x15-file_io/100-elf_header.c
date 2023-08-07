@@ -1,246 +1,262 @@
-#include <stdio.h>
+#include <elf.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <elf.h>
 
 /**
-* print_addr - prints the address of a pointer
-* @ptr: the pointer having the address
-* Return: void function.
-*/
-void print_addr(char *ptr)
+ * elf_checker - checkes for elf file
+ * @he: the elf header
+ */
+void elf_checker(char *he)
 {
-int i;
-int begin;
-char sys;
-
-printf("  Entry point address:               0x");
-
-sys = ptr[4] + '0';
-if (sys == '1')
-{
-begin = 26;
-printf("80");
-for (i = begin; i >= 22; i--)
-{
-if (ptr[i] > 0)
-printf("%x", ptr[i]);
-else if (ptr[i] < 0)
-printf("%x", 256 + ptr[i]);
-}
-if (ptr[7] == 6)
-printf("00");
-}
-
-if (sys == '2')
-{
-begin = 26;
-for (i = begin; i > 23; i--)
-{
-if (ptr[i] >= 0)
-printf("%02x", ptr[i]);
-
-else if (ptr[i] < 0)
-printf("%02x", 256 + ptr[i]);
-
-}
-}
-printf("\n");
+	if (he[0] != 0x7f || he[1] != 'E' || he[2] != 'L' || he[3] != 'F')
+	{
+		dprintf(STDERR_FILENO, "Error: file is not ELF type\n");
+		exit(98);
+	}
 }
 
 /**
-* print_type - prints type of character
-* @ptr: pointer to the character.
-* Return: void function.
-*/
-void print_type(char *ptr)
+ * print_magic - funtion to print elf magic
+ * @he: the elf header
+ */
+void print_magic(char *he)
 {
-char type = ptr[16];
+	int i;
 
-if (ptr[5] == 1)
-type = ptr[16];
-else
-type = ptr[17];
-
-printf("  Type:                              ");
-if (type == 0)
-printf("NONE (No file type)\n");
-else if (type == 1)
-printf("REL (Relocatable file)\n");
-else if (type == 2)
-printf("EXEC (Executable file)\n");
-else if (type == 3)
-printf("DYN (Shared object file)\n");
-else if (type == 4)
-printf("CORE (Core file)\n");
-else
-printf("<unknown: %x>\n", type);
+	printf("ELF Header:\n  Magic:   ");
+	for (i = 0; i < 15; i++)
+		printf("%02x ", (unsigned int)he[i]);
+	printf("%02x", (unsigned int)he[i]);
+	printf("\n");
 }
 
 /**
-* print_osabi - prints the osabi
-* @ptr: the pointer argument.
-* Return: void function.
-*/
-void print_osabi(char *ptr)
+ * print_class - funtion to print the elf class
+ * @he: the elf header
+ * @b: bit argument 1 (64 bits) or 0 (32 bits)
+ */
+void print_class(char *he, int b)
 {
-char osabi = ptr[7];
-
-printf("  OS/ABI:                            ");
-if (osabi == 0)
-printf("UNIX - System V\n");
-else if (osabi == 2)
-printf("UNIX - NetBSD\n");
-else if (osabi == 6)
-printf("UNIX - Solaris\n");
-else
-printf("<unknown: %x>\n", osabi);
-
-printf("  ABI Version:                       %d\n", ptr[8]);
-}
-
-
-/**
-* print_version - prints the version of the file
-* @ptr: Pointer storing the version value.
-* Return: no return.
-*/
-void print_version(char *ptr)
-{
-int version = ptr[6];
-
-printf("  Version:                           %d", version);
-
-if (version == EV_CURRENT)
-printf(" (current)");
-
-printf("\n");
-}
-/**
-* print_data – prints the data derived
-* @ptr: the pointer argument.
-* Return: void function.
-*/
-void print_data(char *ptr)
-{
-char data = ptr[5];
-
-printf("  Data:                              2's complement");
-if (data == 1)
-printf(", little endian\n");
-
-if (data == 2)
-printf(", big endian\n");
-}
-/**
-* print_magic - prints the pointer information.
-* @ptr: the pointer.
-* Return: void function.
-*/
-void print_magic(char *ptr)
-{
-int bytes;
-
-printf("  Magic:  ");
-
-for (bytes = 0; bytes < 16; bytes++)
-printf(" %02x", ptr[bytes]);
-
-printf("\n");
-
+	if (he[4] != 1 && he[4] != 2)
+	{
+		printf("<unknown: %02hx is not a class>\n", he[4]);
+		return;
+	}
+	printf("Class:                             ");
+	if (b == 0)
+		printf("ELF32\n");
+	else if (b == 1)
+		printf("ELF64\n");
 }
 
 /**
-* check_sys - check the version of the system.
-* @ptr: pointer argument.
-* Return: void function.
-*/
-void check_sys(char *ptr)
+ * print_data - function to print the elf data
+ * @he: the elf header
+ */
+void print_data(char *he)
 {
-char sys = ptr[4] + '0';
-
-if (sys == '0')
-exit(98);
-
-printf("ELF Header:\n");
-print_magic(ptr);
-
-if (sys == '1')
-printf("  Class:                             ELF32\n");
-
-if (sys == '2')
-printf("  Class:                             ELF64\n");
-
-print_data(ptr);
-print_version(ptr);
-print_osabi(ptr);
-print_type(ptr);
-print_addr(ptr);
+	printf("Data:                              2's complement, ");
+	if (he[5] == 1)
+		printf("little endian\n");
+	else if (he[5] == 2)
+		printf("big endian\n");
+	else
+		printf("<unknown: %02hx is not a elf data>\n", he[4]);
 }
 
 /**
-* check_elf - checks if it is an elf file.
-* @ptr: the pointer argument.
-* Return: returns 1 if it is an elf file otherwise 0 .
-*/
-int check_elf(char *ptr)
+ * print_version - prints elf version
+ * @he: elf header
+ */
+void print_version(char *he)
 {
-int addr = (int)ptr[0];
-char E = ptr[1];
-char L = ptr[2];
-char F = ptr[3];
-
-if (addr == 127 && E == 'E' && L == 'L' && F == 'F')
-return (1);
-
-return (0);
+	printf("  Version:                           ");
+	if (he[6] == EV_CURRENT)
+		printf("%d (current)\n", he[6]);
+	else if (he[6] != EV_CURRENT)
+	{
+		printf("%d\n", he[6]);
+	}
 }
 
 /**
-* main – entry point to check the code for Holberton School students.
-* @argc: number of arguments.
-* @argv: arguments vector.
-* Return: Always 0.
-*/
-int main(int argc, char *argv[])
+ * print_osabi - funtion to print the elf OS/ABI
+ * @he: the elf header
+ */
+void print_osabi(char *he)
 {
-int fd, ret_read;
-char ptr[27];
-
-if (argc != 2)
-{
-dprintf(STDERR_FILENO, "Usage: elf_header elf_filename\n");
-exit(98);
+	printf("  OS/ABI:                            ");
+	if (he[7] == 0)
+		printf("UNIX - System V\n");
+	else if (he[7] == 1)
+		printf("UNIX - HP-UX\n");
+	else if (he[7] == 2)
+		printf("UNIX - NetBSD\n");
+	else if (he[7] == 3)
+		printf("UNIX - Linux\n");
+	else if (he[7] == 4)
+		printf("UNIX - GNU Hurd\n");
+	else if (he[7] == 6)
+		printf("UNIX - Solaris\n");
+	else if (he[7] == 7)
+		printf("UNIX - AIX\n");
+	else if (he[7] == 8)
+		printf("UNIX - IRIX\n");
+	else if (he[7] == 9)
+		printf("UNIX - FreeBSD\n");
+	else if (he[7] == 10)
+		printf("UNIX - Tru64\n");
+	else if (he[7] == 11)
+		printf("UNIX - Novell Modesto\n");
+	else if (he[7] == 12)
+		printf("UNIX - OpenBSD\n");
+	else if (he[7] == 13)
+		printf("UNIX - Open VMS\n");
+	else if (he[7] == 14)
+		printf("UNIX - AROS\n");
+	else if (he[7] == 15)
+		printf("UNIX - AROS\n");
+	else if (he[7] == 16)
+		printf("UNIX - Fenix OS\n");
+	else if (he[7] == 17)
+		printf("UNIX - CloudABI\n");
+	else
+		printf("<unknown: %02hx>\n", he[7]);
 }
 
-fd = open(argv[1], O_RDONLY);
-
-if (fd < 0)
+/**
+ * print_abi - funtion to print els abi version
+ * @he: the elf header
+ */
+void print_abi(char *he)
 {
-dprintf(STDERR_FILENO, "Err: file can not be open\n");
-exit(98);
+	printf("  ABI Version:                       %d\n", he[8]);
 }
 
-lseek(fd, 0, SEEK_SET);
-ret_read = read(fd, ptr, 27);
-
-if (ret_read == -1)
+/**
+ * print_type - funtion that prints the elf type
+ * @he: the elf header
+ * @b: bit argument  int
+ */
+void print_type(char *he, unsigned int b)
 {
-dprintf(STDERR_FILENO, "Err: The file can not be read\n");
-exit(98);
+	int t = 17;
+
+	(void) b;
+
+	if (he[5] == 1)
+		t = 16;
+	printf("  Type:                              ");
+	switch (he[t])
+	{
+	case 0:
+		printf("NONE\n");
+		break;
+	case 1:
+		printf("REL (Relocatable file)\n");
+		break;
+	case 2:
+		printf("EXEC (Executable file)\n");
+		break;
+	case 3:
+		printf("DYN (Shared object file)\n");
+		break;
+	case 4:
+		printf("CORE (Core file)\n");
+		break;
+	default:
+		printf("<unknown>: %02x\n", he[t]);
+	}
 }
 
-if (!check_elf(ptr))
+/**
+ * print_entry_point - funtion that prints the entry point adress
+ * @he: the elf header
+ * @b: the address
+ */
+void print_entry_point(char *he, unsigned int b)
 {
-dprintf(STDERR_FILENO, "Err: It is not an ELF\n");
-exit(98);
+	int i, counter = 27;
+
+	printf("  Entry point address:               ");
+	if (b == 1)
+		counter = 31;
+	if (he[5] == 1)
+	{
+		i = counter;
+		while (he[i] == 0 && i > 24)
+			i--;
+		printf("%x", he[i]);
+		i--;
+		while (i > 25)
+		{
+			printf("%02x", (unsigned char) he[i]);
+			i--;
+		}
+	} else
+	{
+		i = 24;
+		while (he[i] == 0)
+			i++;
+		printf("%x", he[i]);
+		i++;
+		while (i <= counter)
+		{
+			printf("%02x", (unsigned char) he[i]);
+			i++;
+		}
+	}
+	printf("\n");
 }
 
-check_sys(ptr);
-close(fd);
+/**
+ * main - entry point of the program
+ * @argc: number of arguments
+ * @argv: array of arguments
+ * Return: 0
+ */
+int main(int argc, char **argv)
+{
+	int fELF, Close, Read, b = 0;
+	char he[16];
 
-return (0);
+	if (argc != 2)
+	{
+		dprintf(STDERR_FILENO, "wrong number of arguments\n");
+		exit(98); }
+	if (argv[1] == 0)
+	{
+		dprintf(STDERR_FILENO, "Please enter a name, NULL error\n");
+		exit(98); }
+	fELF = open(argv[1], O_RDONLY);
+	if (fELF == -1)
+	{
+		dprintf(STDERR_FILENO, "Can't open file\n");
+		exit(98); }
+	Read = read(fELF, he, 32);
+	if (Read == -1)
+	{
+		dprintf(STDERR_FILENO, "Error Reading File\n");
+		exit(98); }
+	elf_checker(he);
+	if (he[4] == 2)
+		b = 1;
+	print_magic(he);
+	print_class(he, b);
+	print_data(he);
+	print_version(he);
+	print_osabi(he);
+	print_abi(he);
+	print_type(he, b);
+	print_entry_point(he, b);
+	Close = close(fELF);
+	if (Close == -1)
+	{
+		dprintf(STDERR_FILENO, "Error closing FD ELF\n");
+		exit(98); }
+	return (0);
 }
